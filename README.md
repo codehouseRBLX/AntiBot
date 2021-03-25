@@ -9,4 +9,4 @@
 
 # About
 
-You know those scam bots, right? The ones that join your game and chat messages to scam links over and over again. 
+You know those scam bots, right? The ones that join your game and chat messages to scam links over and over again. We know that these links do not give out the promised "reward", well, at least most of us do. It's really hard to detect if a user is a scam bot or not, since the bots can always change their meathod of "attack". By using machine learning, we can pool together tons of data to help make it easier to detect bots.
