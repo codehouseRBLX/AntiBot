@@ -128,10 +128,10 @@ local function ValidateMessage(sender, message)
 			PlayerData[Plr].TotalAreScams, PlayerData[Plr].TotalAreNotScams = Scams, NotScams
 		end
 		if Plr then
+			ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.", "All", AntibotNotification.Name)
 			Punish(Plr, Scams, NotScams)
 		end
 
-		ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.", "All", AntibotNotification.Name)
 		return true
 	end
 
