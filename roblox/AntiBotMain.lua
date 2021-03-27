@@ -139,7 +139,7 @@ local function ValidateMessage(sender, message)
 end
 
 local function Run(ChatService)
-	local function applyExtraFilters(sender, message, channelName)
+	local function checkMessageAntiBot(sender, message, channelName)
 		if not removeMessages then
 			coroutine.wrap(pcall)(ValidateMessage, sender, message)
 		elseif ValidateMessage(sender, message) then
@@ -149,7 +149,7 @@ local function Run(ChatService)
 		return false
 	end
 
-	ChatService:RegisterProcessCommandsFunction("applyExtraFilters", applyExtraFilters)
+	ChatService:RegisterProcessCommandsFunction("AntiBotMessageCheck", checkMessageAntiBot)
 end
 
 return Run
