@@ -274,6 +274,10 @@ const scam = [
   {
     input: "get free redvalk",
     output: {scam: 1}
+  },
+  {
+    input: "get free valk",
+    output: {scam: 1}
   }
 ]
 
