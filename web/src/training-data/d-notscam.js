@@ -42,6 +42,34 @@ const notscam = [
   {
     input: "can i please have robux please can i please have free robux",
     output: {notscam: 1}
+  },
+  {
+    input: "give me robux me is poor",
+    output: {notscam: 1}
+  },
+  {
+    input: "fake robux scam",
+    output: {notscam: 1}
+  },
+  {
+    input: "this is a free robux scam",
+    output: {notscam: 1}
+  },
+  {
+    input: "you cannot get free robux",
+    output: {notscam: 1}
+  },
+  {
+    input: "there is no such thign as free robux",
+    output: {notscam: 1}
+  },
+  {
+    input: "free robux does not exist",
+    output: {notscam: 1}
+  },
+  {
+    input: "free robux is a scam,
+    output: {notscam: 1}
   }
 ]
 
