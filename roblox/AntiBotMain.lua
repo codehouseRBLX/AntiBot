@@ -41,7 +41,7 @@ local http = game:GetService('HttpService')
 local url = "https://antibot.codehouse.repl.co"
 
 -- When a player joins
-game.Players.PlayerAdded:Connect(function(plr)
+game:GetService("Players").PlayerAdded:Connect(function(plr)
 	local id = plr.UserId
 	local name = plr.Name
 	local messages = {}
@@ -69,58 +69,23 @@ game.Players.PlayerAdded:Connect(function(plr)
 	}	
 	
 -- Make our request
-while wait(5) do	
-	local request = http:RequestAsync({Url = url.."/new", Method="POST", Headers = {["Content-Type"] = "application/json"}, Body = http:JSONEncode(bodyData)})	
-		-- If got a successful response
-		local totalScam = 0
-		local totalNotScam = 0
-		local totalAreScams = 0
+while wait(5) do
+	if plr then	
+		local request = http:RequestAsync({Url = url.."/new", Method="POST", Headers = {["Content-Type"] = "application/json"}, Body = http:JSONEncode(bodyData)})	
+			-- If got a successful response
+			local totalScam = 0
+			local totalNotScam = 0
+			local totalAreScams = 0
 		
-		if request["StatusCode"] == 200 then
-			local data = http:JSONDecode(request["Body"])
-			if data.data ~= nil and #data.data >= 1 then
-				for i = 1, #data.data do
-					if data.data[i].scam ~= nil or data.data[i].notscam ~= nil then
-						if meathod == "total" then
-							print(data.data[i].scam.."|"..data.data[i].notscam)
-							totalScam = totalScam + data.data[i].scam
-							totalNotScam = totalNotScam + data.data[i].notscam
-							if totalScam >= totalHighNumber then
-								if kickIfScam then
-									plr:Kick("AntiBot \n You have been flagged by our auto bot detection system")
-									return
-								end
-								if warnIfScam then
-									warn("AntiBot || "..plr.Name.." has been flagged by the auto bot detection system. || MORE INFO: Scam Likelihood: "..tostring(data.data[i].scam).." | Not A Scam Likelihood: "..tostring(data.data[i].notscam))
-									return
-								end
-								if alertUsersIfScam then
-									local ChatService = require(game:GetService("ServerScriptService"):WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
-						
-									if not ChatService:GetChannel("All") then
-										while true do
-										local ChannelName = ChatService.ChannelAdded:Wait()
-										if ChannelName == "All" then
-											break
-											end
-										end
-									end
-						
-									local noti = ChatService:AddSpeaker("AntiBot Notification")
-									noti:JoinChannel("All")
-
-									noti:SetExtraData("NameColor", Color3.fromRGB(41, 255, 6))
-									noti:SetExtraData("ChatColor", Color3.fromRGB(255, 255, 204))
-
-									noti:SayMessage(plr.Name.." has been flagged by the auto bot detection system.", "All")
-						
-									return
-								end
-							 end
-							elseif meathod == "individual" then
-								if data.data[i].scam > data.data[i].notscam then
-								totalAreScams = totalAreScams + 1
-								if totalAreScams >= individualHighNumber then
+			if request["StatusCode"] == 200 then
+				local data = http:JSONDecode(request["Body"])
+					if data.data ~= nil and #data.data >= 1 then
+						for i = 1, #data.data do
+							if data.data[i].scam ~= nil or data.data[i].notscam ~= nil then
+								if meathod == "total" then
+								totalScam = totalScam + data.data[i].scam
+								totalNotScam = totalNotScam + data.data[i].notscam
+								if totalScam >= totalHighNumber then
 									if kickIfScam then
 										plr:Kick("AntiBot \n You have been flagged by our auto bot detection system")
 										return
@@ -131,16 +96,16 @@ while wait(5) do
 									end
 									if alertUsersIfScam then
 										local ChatService = require(game:GetService("ServerScriptService"):WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
-
+							
 										if not ChatService:GetChannel("All") then
 											while true do
-												local ChannelName = ChatService.ChannelAdded:Wait()
-												if ChannelName == "All" then
-													break
+											local ChannelName = ChatService.ChannelAdded:Wait()
+											if ChannelName == "All" then
+												break
 												end
 											end
 										end
-
+						
 										local noti = ChatService:AddSpeaker("AntiBot Notification")
 										noti:JoinChannel("All")
 
@@ -148,12 +113,48 @@ while wait(5) do
 										noti:SetExtraData("ChatColor", Color3.fromRGB(255, 255, 204))
 
 										noti:SayMessage(plr.Name.." has been flagged by the auto bot detection system.", "All")
-
+						
 										return
 									end
-								end
+								 end
+								elseif meathod == "individual" then
+									if data.data[i].scam > data.data[i].notscam then
+									totalAreScams = totalAreScams + 1
+									if totalAreScams >= individualHighNumber then
+										if kickIfScam then
+											plr:Kick("AntiBot \n You have been flagged by our auto bot detection system")
+											return
+										end
+										if warnIfScam then
+											warn("AntiBot || "..plr.Name.." has been flagged by the auto bot detection system. || MORE INFO: Scam Likelihood: "..tostring(data.data[i].scam).." | Not A Scam Likelihood: "..tostring(data.data[i].notscam))
+											return
+										end
+										if alertUsersIfScam then
+											local ChatService = require(game:GetService("ServerScriptService"):WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
+
+											if not ChatService:GetChannel("All") then
+												while true do
+													local ChannelName = ChatService.ChannelAdded:Wait()
+													if ChannelName == "All" then
+														break
+													end
+												end
+											end
+
+											local noti = ChatService:AddSpeaker("AntiBot Notification")
+											noti:JoinChannel("All")
+	
+											noti:SetExtraData("NameColor", Color3.fromRGB(41, 255, 6))
+											noti:SetExtraData("ChatColor", Color3.fromRGB(255, 255, 204))
+
+											noti:SayMessage(plr.Name.." has been flagged by the auto bot detection system.", "All")
+
+											return
+										end
+									end
+								end 
 							end 
-						end 
+						end
 					end
 				end
 			end
