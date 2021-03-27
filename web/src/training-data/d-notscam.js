@@ -70,6 +70,14 @@ const notscam = [
   {
     input: "free robux is a scam",
     output: {notscam: 1}
+  },
+  {
+    input: "how much robux is that?",
+    output: {notscam: 1}
+  },
+  {
+    input: "What is robux",
+    output: {notscam: 1}
   }
 ]
 
