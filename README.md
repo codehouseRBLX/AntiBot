@@ -19,9 +19,7 @@ Take the model from [here](https://www.roblox.com/library/6568673615/AntiBot), a
 
 ## Steps
 
-1. Bring "AntiBotMain" into "ServerScriptService"
-2. Modify the settings in "AntiBotMain" to your liking
-3. **ENABLE HTTP REQUESTS (under game settings)**. If this step is not done, the module won't be able to function
+1. **ENABLE HTTP REQUESTS (under game settings)**. If this step is not done, the module won't be able to function
 4. Watch the scam bots go down!
 
 ---
