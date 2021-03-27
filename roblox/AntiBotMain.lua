@@ -67,7 +67,7 @@ end
 -- When a player joins
 Players.PlayerAdded:Connect(function(Plr)
 	if BannedIds[Plr.UserId] then
-		Plr:Kick("AntiBot\nYou have been banned from the server due to scam messages.\nIf you belive this is a mistake contact the game creator.")
+		Plr:Kick("AntiBot\nYou have been banned from the server due to scam messages.\nIf you belive this is a mistake, please contact the game creator.")
 		return
 	end
 
@@ -130,7 +130,8 @@ local function ValidateMessage(sender, message)
 		if Plr then
 			Punish(Plr, Scams, NotScams)
 		end
-		
+
+		ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.", "All", AntibotNotification.Name)
 		return true
 	end
 
@@ -139,10 +140,10 @@ end
 
 local function Run(ChatService)
 	local function applyExtraFilters(sender, message, channelName)
-		if ValidateMessage(sender, message) then
-			ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.", "All", AntibotNotification.Name)
-
-			return removeMessages
+		if not removeMessages then
+			coroutine.wrap(pcall)(ValidateMessage, sender, message)
+		elseif ValidateMessage(sender, message) then
+			return true
 		end
 
 		return false
