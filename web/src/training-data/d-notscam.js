@@ -60,7 +60,7 @@ const notscam = [
     output: {notscam: 1}
   },
   {
-    input: "there is no such thign as free robux",
+    input: "there is no such thing as free robux",
     output: {notscam: 1}
   },
   {
