@@ -21,14 +21,16 @@ Thanks for using AntiBot!
 (____/(____) (__)  (__) (__)\_)__) \___/(____/
 ]]--
 local kickIfScam = true -- Kick the user that is said to be a bot
-local warnIfScam = false -- Print a message to the console if there is a user that is said to be a bot
+local warnIfScam = true -- Print a message to the console if there is a user that is said to be a bot
 local alertUsersIfScam = false -- Tell the rest of the players in the server if a scam bot was found
-local removeMessages = false -- Remove the scam messages if a user is found to be a bot
+local canBanBots = true -- If it bans 
+local removeMessages = true -- Remove the scam messages if a user is found to be a bot. Suggested to be on 
 local individualHighNumber = 1 -- If there are this number messages or more marked as scam, the user will face the desired punishments (THE LOWER THE NUMBER THE FASTER THE SYSTEM WILL WORK)
 local totalHighNumber = 0.4 -- If the total scam score is greater than or equal to this number, the user will face the desired punishments (THE LOWER THE NUMBER THE FASTER THE SYSTEM WILL WORK)
-local meathod = "total" -- The meathod that controls how the AI tabulates the data
+local method = "total" -- The meathod that controls how the AI tabulates the data
 -- "total" - Adds up the scam and not scam score, and checks to see if it's higher than the number (the one you put under "totalHighNumber")
 -- "individual" - Checks how many of the scam messages were sent
+local APIurl = "https://antibot.codehouse.repl.co" -- Do not change unless you known what you are doing
 
 --[[
   ___  __  ____  ____ 
@@ -36,128 +38,117 @@ local meathod = "total" -- The meathod that controls how the AI tabulates the da
 ( (__(  O )) D ( ) _) 
  \___)\__/(____/(____)
 ]]--
--- Variables
-local http = game:GetService('HttpService')
-local url = "https://antibot.codehouse.repl.co"
-
--- When a player joins
-game:GetService("Players").PlayerAdded:Connect(function(plr)
-	local id = plr.UserId
-	local name = plr.Name
-	local messages = {}
-	local time = 1
-	
--- Chats
-	plr.Chatted:Connect(function(msg)
-		table.insert(messages, msg)
-	end)
-	
--- Time in game
-	--local start = tick()
-	--while plr.Parent do
-	--	time = time + (tick() - start)
-	--	start = tick()
-	--	wait()
-	--end
-	
--- Get our data in a table
-	local bodyData = {
-		name = name,
-		id = id,
-		chats = messages,
-		timeInGame = time
-	}	
-	
--- Make our request
-while wait(5) do
-	if plr then	
-		local request = http:RequestAsync({Url = url.."/new", Method="POST", Headers = {["Content-Type"] = "application/json"}, Body = http:JSONEncode(bodyData)})	
-			-- If got a successful response
-			local totalScam = 0
-			local totalNotScam = 0
-			local totalAreScams = 0
-		
-			if request["StatusCode"] == 200 then
-				local data = http:JSONDecode(request["Body"])
-					if data.data ~= nil and #data.data >= 1 then
-						for i = 1, #data.data do
-							if data.data[i].scam ~= nil or data.data[i].notscam ~= nil then
-								if meathod == "total" then
-								totalScam = totalScam + data.data[i].scam
-								totalNotScam = totalNotScam + data.data[i].notscam
-								if totalScam >= totalHighNumber then
-									if kickIfScam then
-										plr:Kick("AntiBot \n You have been flagged by our auto bot detection system")
-										return
-									end
-									if warnIfScam then
-										warn("AntiBot || "..plr.Name.." has been flagged by the auto bot detection system. || MORE INFO: Scam Likelihood: "..tostring(data.data[i].scam).." | Not A Scam Likelihood: "..tostring(data.data[i].notscam))
-										return
-									end
-									if alertUsersIfScam then
-										local ChatService = require(game:GetService("ServerScriptService"):WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
-							
-										if not ChatService:GetChannel("All") then
-											while true do
-											local ChannelName = ChatService.ChannelAdded:Wait()
-											if ChannelName == "All" then
-												break
-												end
-											end
-										end
-						
-										local noti = ChatService:AddSpeaker("AntiBot Notification")
-										noti:JoinChannel("All")
-
-										noti:SetExtraData("NameColor", Color3.fromRGB(41, 255, 6))
-										noti:SetExtraData("ChatColor", Color3.fromRGB(255, 255, 204))
-
-										noti:SayMessage(plr.Name.." has been flagged by the auto bot detection system.", "All")
-						
-										return
-									end
-								 end
-								elseif meathod == "individual" then
-									if data.data[i].scam > data.data[i].notscam then
-									totalAreScams = totalAreScams + 1
-									if totalAreScams >= individualHighNumber then
-										if kickIfScam then
-											plr:Kick("AntiBot \n You have been flagged by our auto bot detection system")
-											return
-										end
-										if warnIfScam then
-											warn("AntiBot || "..plr.Name.." has been flagged by the auto bot detection system. || MORE INFO: Scam Likelihood: "..tostring(data.data[i].scam).." | Not A Scam Likelihood: "..tostring(data.data[i].notscam))
-											return
-										end
-										if alertUsersIfScam then
-											local ChatService = require(game:GetService("ServerScriptService"):WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
-
-											if not ChatService:GetChannel("All") then
-												while true do
-													local ChannelName = ChatService.ChannelAdded:Wait()
-													if ChannelName == "All" then
-														break
-													end
-												end
-											end
-
-											local noti = ChatService:AddSpeaker("AntiBot Notification")
-											noti:JoinChannel("All")
-	
-											noti:SetExtraData("NameColor", Color3.fromRGB(41, 255, 6))
-											noti:SetExtraData("ChatColor", Color3.fromRGB(255, 255, 204))
-
-											noti:SayMessage(plr.Name.." has been flagged by the auto bot detection system.", "All")
-
-											return
-										end
-									end
-								end 
-							end 
-						end
-					end
-				end
-			end
+-- // Variables
+local MessageCache, PlayerData, BannedIds = {}, {}, {}
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
+local HashLib = require(script:WaitForChild("HashLib"))
+local Sha1 = HashLib.sha1
+local ChatService = require(ServerScriptService:WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
+if not ChatService:GetChannel("All") then
+	while true do
+		local ChannelName = ChatService.ChannelAdded:Wait()
+		if ChannelName == "All" then
+			break
 		end
 	end
+end
+
+local AntibotNotification = ChatService:AddSpeaker("Anti-Bot Notification")
+AntibotNotification:JoinChannel("All")
+AntibotNotification:SetExtraData("NameColor", Color3.fromRGB(234, 0, 0))
+AntibotNotification:SetExtraData("ChatColor", Color3.fromRGB(255, 255, 255))
+
+for _, v in ipairs(Players:GetPlayers()) do
+	PlayerData[v] = {TotalAreScams = 0, TotalAreNotScams = 0}
+end
+
+-- When a player joins
+Players.PlayerAdded:Connect(function(Plr)
+	if BannedIds[Plr.UserId] then
+		Plr:Kick("AntiBot\nYou have been banned from the server due to scam messages.\nIf you belive this is a mistake contact the game creator.")
+		return
+	end
+
+	PlayerData[Plr] = {TotalAreScams = 0, TotalAreNotScams = 0}
 end)
+
+-- // Functions
+local function Punish(Plr, Scams, NotScams)
+	if kickIfScam and Plr.MembershipType == Enum.MembershipType.None then
+		if canBanBots and Plr.AccountAge < 12 then
+			table.insert(BannedIds, Plr.UserId)
+		end
+		Plr:Kick("AntiBot\nYou have been kicked from the server due to scam messages.\nIf you belive this is a mistake contact the game creator.")
+	end
+	if warnIfScam then
+		warn("AntiBot || "..Plr.Name.." has been flagged by the auto bot detection system. || MORE INFO: Scam Likelihood: "..tostring(Scams).." | Not A Scam Likelihood: "..tostring(NotScams))
+	end
+	if alertUsersIfScam then
+		AntibotNotification:SayMessage(Plr.Name.." has been flagged by the auto bot detection system.", "All")
+	end
+end
+
+local function ValidateMessage(sender, message)
+	local Plr = ChatService:GetSpeaker(sender):GetPlayer()
+	if not Plr or string.sub(message, 1, 3) == "/e " then
+		return false
+	end
+
+	local NotScams, Scams = 0, 0
+	local MessageHash = Sha1(string.lower(message))
+	if MessageCache[MessageHash] then
+		NotScams, Scams = unpack(MessageCache[MessageHash])
+	else
+		local bodyData = {
+			name = Plr.Name,
+			id = Plr.UserId,
+			chats = {message},
+			timeInGame = 5
+		}
+		
+		local Body
+		local Success = xpcall(function()
+			Body = HttpService:JSONDecode(HttpService:RequestAsync({Url = APIurl.."/new", Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(bodyData)}).Body)	
+		end, function(Err)
+			warn("An error occured while trying to connect to the anti-bot API. Reason: ", Err)
+		end)
+
+		if Success and Body and Body.Data and #Body.Data >= 1 then
+			NotScams, Scams = Body.Data[1].notscam, Body.Data[1].scam
+		end
+
+		MessageCache[MessageHash] = {NotScams, Scams}
+	end
+
+
+	if method == "total" and Scams + PlayerData[Plr].TotalAreScams >= totalHighNumber or Scams >= individualHighNumber then
+		if method == "total" then
+			PlayerData[Plr].TotalAreScams, PlayerData[Plr].TotalAreNotScams = Scams, NotScams
+		end
+		if Plr then
+			Punish(Plr, Scams, NotScams)
+		end
+		
+		return true
+	end
+
+	return false
+end
+
+local function Run(ChatService)
+	local function applyExtraFilters(sender, message, channelName)
+		if ValidateMessage(sender, message) then
+			ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake contact the game creator.", "All", AntibotNotification.Name)
+
+			return removeMessages
+		end
+
+		return false
+	end
+
+	ChatService:RegisterProcessCommandsFunction("applyExtraFilters", applyExtraFilters)
+end
+
+return Run
