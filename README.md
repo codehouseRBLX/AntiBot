@@ -20,6 +20,7 @@ Take the model from [here](https://www.roblox.com/library/6568673615/AntiBot), a
 ## Steps
 
 1. **ENABLE HTTP REQUESTS (under game settings)**. If this step is not done, the module won't be able to function
+2. Modify the settings in "AntiBotMain" to your liking
 4. Watch the scam bots go down!
 
 ---
