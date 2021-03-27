@@ -41,7 +41,7 @@ local http = game:GetService('HttpService')
 local url = "https://antibot.codehouse.repl.co"
 
 -- When a player joins
-game.Players.PlayerAdded:Connect(function(plr)
+game:GetService("Players").PlayerAdded:Connect(function(plr)
 	local id = plr.UserId
 	local name = plr.Name
 	local messages = {}
