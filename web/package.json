@@ -8,7 +8,9 @@
     "npm": "6.x"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "ng build",
+    "heroku-postbuild": "ng build --prod"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
