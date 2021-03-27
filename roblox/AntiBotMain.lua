@@ -80,7 +80,7 @@ local function Punish(Plr, Scams, NotScams)
 		if canBanBots and Plr.AccountAge < 12 then
 			table.insert(BannedIds, Plr.UserId)
 		end
-		Plr:Kick("AntiBot\nYou have been kicked from the server due to scam messages.\nIf you belive this is a mistake contact the game creator.")
+		Plr:Kick("AntiBot\nYou have been kicked from the server due to scam messages.\nIf you belive this is a mistake, please contact the game creator.")
 	end
 	if warnIfScam then
 		warn("AntiBot || "..Plr.Name.." has been flagged by the auto bot detection system. || MORE INFO: Scam Likelihood: "..tostring(Scams).." | Not A Scam Likelihood: "..tostring(NotScams))
@@ -115,8 +115,8 @@ local function ValidateMessage(sender, message)
 			warn("An error occured while trying to connect to the anti-bot API. Reason: ", Err)
 		end)
 
-		if Success and Body and Body.Data and #Body.Data >= 1 then
-			NotScams, Scams = Body.Data[1].notscam, Body.Data[1].scam
+		if Success and Body and Body.data and #Body.data >= 1 then
+			NotScams, Scams = Body.data[1].notscam, Body.data[1].scam
 		end
 
 		MessageCache[MessageHash] = {NotScams, Scams}
@@ -140,7 +140,7 @@ end
 local function Run(ChatService)
 	local function applyExtraFilters(sender, message, channelName)
 		if ValidateMessage(sender, message) then
-			ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake contact the game creator.", "All", AntibotNotification.Name)
+			ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.", "All", AntibotNotification.Name)
 
 			return removeMessages
 		end
