@@ -28,4 +28,6 @@ Take the model from [here](https://www.roblox.com/library/6568673615/AntiBot), a
 
 # I found an issue/I have a suggestion
 
-Great! Community feedback is the best way to improve this system! You can either submit a pull request with some changes, or open an issue.
+Great! Community feedback is the best way to improve this system! You can either submit a pull request with some changes, or open a new issue/suggestion.
+
+If you are submitting a pull request, please take a look at our contribution guide [here](https://github.com/codehouseRBLX/AntiBot/CONTRIBUTE.md)
