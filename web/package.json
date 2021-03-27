@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "engines": {
+    "node": "14.x",
+    "npm": "6.x"
+  }
   "scripts": {
     "start": "node index.js"
   },
