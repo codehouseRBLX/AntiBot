@@ -6,6 +6,7 @@ const serializer = require('./src/serializer')
 const net        = new brain.NeuralNetwork()
 
 const app = express();
+net.train(serializer.serialize(trainData))
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,15 +24,14 @@ app.get('/ping', (req, res) => {
 
 // NEW @POST
 app.post('/new', (req, res) => {
-net.train(serializer.serialize(trainData))
 
-var outputs = []
-for (let i = 0; i < req.body.chats.length; i++) {
-  let out = net.run(serializer.encode(req.body.chats[i]))
-  outputs.push(out)
-}
+let msg = req.body.chats[0] + " random words to make it function"
 
-res.status(200).json({message: "success", data: outputs})
+let out = net.run(serializer.encode(msg))
+
+console.log(out)
+
+res.status(200).json({message: "success", data: [out]})
 });
 
 // REPORT @POST

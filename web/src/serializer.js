@@ -19,11 +19,10 @@ const fixLengths = (data) => {
 const encode = d => {
   const newArr = [];
 
-  for (let i = 0; i < d.length; i++) {
-  d[i].split('').map(c => {
+  d.split('').map(c => {
     newArr.push((c.charCodeAt(0) / 255))
   })
-  }
+
   return newArr;
 }
 
