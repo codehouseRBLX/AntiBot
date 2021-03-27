@@ -25,6 +25,7 @@ local warnIfScam = true -- Print a message to the console if there is a user tha
 local alertUsersIfScam = false -- Tell the rest of the players in the server if a scam bot was found
 local canBanBots = true -- If it bans 
 local removeMessages = true -- Remove the scam messages if a user is found to be a bot. Suggested to be on 
+local filterInsteadOfHide = true -- The message will be displayed as "[Content Deleted]" instead of just disappearing. Only works if removeMessages is on. This is more efficient and the chat will load faster.
 local individualHighNumber = 1 -- If there are this number messages or more marked as scam, the user will face the desired punishments (THE LOWER THE NUMBER THE FASTER THE SYSTEM WILL WORK)
 local totalHighNumber = 0.4 -- If the total scam score is greater than or equal to this number, the user will face the desired punishments (THE LOWER THE NUMBER THE FASTER THE SYSTEM WILL WORK)
 local method = "total" -- The meathod that controls how the AI tabulates the data
@@ -149,7 +150,17 @@ local function Run(ChatService)
 		return false
 	end
 
-	ChatService:RegisterProcessCommandsFunction("AntiBotMessageCheck", checkMessageAntiBot)
+	local function filterMessageASync(sender, messageObject, channelName)
+		if ValidateMessage(sender, messageObject.Message) then
+			messageObject.Message = "[Content Deleted]"
+		end
+	end
+
+	if filterInsteadOfHide and removeMessages then
+		ChatService:RegisterFilterMessageFunction("AntiBotMessageCheckFilter", filterMessageASync)
+	else
+		ChatService:RegisterProcessCommandsFunction("AntiBotMessageCheck", checkMessageAntiBot)
+	end
 end
 
 return Run
