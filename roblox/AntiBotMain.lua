@@ -25,6 +25,7 @@ local warnIfScam = true -- Print a message to the console if there is a user tha
 local alertUsersIfScam = false -- Tell the rest of the players in the server if a scam bot was found
 local canBanBots = true -- If it bans 
 local removeMessages = true -- Remove the scam messages if a user is found to be a bot. Suggested to be on 
+local filterInsteadOfHide = true -- The message will be displayed as "[Content Deleted]" instead of just disappearing. Only works if removeMessages is on. This is more efficient and the chat will load faster.
 local individualHighNumber = 1 -- If there are this number messages or more marked as scam, the user will face the desired punishments (THE LOWER THE NUMBER THE FASTER THE SYSTEM WILL WORK)
 local totalHighNumber = 0.4 -- If the total scam score is greater than or equal to this number, the user will face the desired punishments (THE LOWER THE NUMBER THE FASTER THE SYSTEM WILL WORK)
 local method = "total" -- The meathod that controls how the AI tabulates the data
@@ -67,7 +68,7 @@ end
 -- When a player joins
 Players.PlayerAdded:Connect(function(Plr)
 	if BannedIds[Plr.UserId] then
-		Plr:Kick("AntiBot\nYou have been banned from the server due to scam messages.\nIf you belive this is a mistake contact the game creator.")
+		Plr:Kick("AntiBot\nYou have been banned from the server due to scam messages.\nIf you belive this is a mistake, please contact the game creator.")
 		return
 	end
 
@@ -128,9 +129,10 @@ local function ValidateMessage(sender, message)
 			PlayerData[Plr].TotalAreScams, PlayerData[Plr].TotalAreNotScams = Scams, NotScams
 		end
 		if Plr then
+			ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.", "All", AntibotNotification.Name)
 			Punish(Plr, Scams, NotScams)
 		end
-		
+
 		return true
 	end
 
@@ -138,17 +140,27 @@ local function ValidateMessage(sender, message)
 end
 
 local function Run(ChatService)
-	local function applyExtraFilters(sender, message, channelName)
-		if ValidateMessage(sender, message) then
-			ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.", "All", AntibotNotification.Name)
-
-			return removeMessages
+	local function checkMessageAntiBot(sender, message, channelName)
+		if not removeMessages then
+			coroutine.wrap(pcall)(ValidateMessage, sender, message)
+		elseif ValidateMessage(sender, message) then
+			return true
 		end
 
 		return false
 	end
 
-	ChatService:RegisterProcessCommandsFunction("applyExtraFilters", applyExtraFilters)
+	local function filterMessageASync(sender, messageObject, channelName)
+		if ValidateMessage(sender, messageObject.Message) then
+			messageObject.Message = "[Content Deleted]"
+		end
+	end
+
+	if filterInsteadOfHide and removeMessages then
+		ChatService:RegisterFilterMessageFunction("AntiBotMessageCheckFilter", filterMessageASync)
+	else
+		ChatService:RegisterProcessCommandsFunction("AntiBotMessageCheck", checkMessageAntiBot)
+	end
 end
 
 return Run
