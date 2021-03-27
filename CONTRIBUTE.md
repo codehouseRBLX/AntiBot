@@ -27,8 +27,8 @@ If you are adding training data to make the AI run faster, better, and stronger,
 
 ```javascript
 {
-  "input": "<your scam message or your not scam message>",
-  "output": {<scam or notscam}: 1
+  input: "<your scam message or your not scam message>",
+  output: {<scam or notscam}: 1
 },
 ```
 
