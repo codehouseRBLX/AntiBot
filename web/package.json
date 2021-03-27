@@ -1,0 +1,14 @@
+{
+  "name": "antibot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "brain.js": "^1.1.2",
+    "express": "^4.17.1"
+  }
+}
