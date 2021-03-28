@@ -398,6 +398,10 @@ const scam = [
   {
     input: "i got so many gamepasses for free from clicking this link in my web browser",
     output: {scam: 1}
+  },
+  {
+    input: "i got tons of robux by putting this link in my web browser",
+    output: {scam: 1}
   }
 ]
 
