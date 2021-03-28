@@ -22,7 +22,7 @@ const encode = d => {
   d.split('').map(c => {
     newArr.push((c.charCodeAt(0) / 255))
   })
-console.log(newArr)
+
   return newArr;
 }
 
