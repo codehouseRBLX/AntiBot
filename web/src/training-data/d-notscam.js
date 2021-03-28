@@ -78,7 +78,39 @@ const notscam = [
   {
     input: "What is robux",
     output: {notscam: 1}
-  }
+  },
+  {
+    input: "what are robux",
+    output: {notscam: 1}
+  },
+  {
+    input: "can i please have robux can i please have robux can i please have robux",
+    output: {notscam: 1}
+  },
+  {
+    input: "can i have them",
+    output: {notscam: 1}
+  },
+  {
+    input: "can i have them please",
+    output: {notscam: 1}
+  },
+  {
+    input: "can i please have them",
+    output: {notscam: 1}
+  },
+  {
+    input: "can i",
+    output: {notscam: 1}
+  },
+  {
+    input: "can we",
+    output: {notscam: 1}
+  },
+  {
+    input: "can you",
+    output: {notscam: 1}
+  },
 ]
 
 module.exports = notscam
