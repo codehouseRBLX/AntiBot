@@ -25,7 +25,7 @@ app.get('/ping', (req, res) => {
 // NEW @POST
 app.post('/new', (req, res) => {
 
-let msg = req.body.chats[0] + " random words to make it function"
+let msg = req.body.chats[0] + " ahahaighaiosghoisahgiosahgioshoiashgi"
 
 let out = net.run(serializer.encode(msg))
 
