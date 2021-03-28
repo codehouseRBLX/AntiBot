@@ -7,7 +7,6 @@
  /_/    \_\_| |_|\__|_|____/ \___/ \__|
                                        
         The easiest way to keep scam bots out of your game - Created by lxgh1lxy
-
 This script is what powers AntiBot. To get started, please scroll down, and modify the settings to your liking.
 	
 Thanks for using AntiBot!
@@ -108,7 +107,7 @@ local function ValidateMessage(sender, message)
 			chats = {message},
 			timeInGame = 5
 		}
-		
+
 		local Body
 		local Success = xpcall(function()
 			Body = HttpService:JSONDecode(HttpService:RequestAsync({Url = APIurl.."/new", Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(bodyData)}).Body)	
@@ -124,7 +123,7 @@ local function ValidateMessage(sender, message)
 	end
 
 
-	if method == "total" and Scams + PlayerData[Plr].TotalAreScams >= totalHighNumber or Scams >= individualHighNumber then
+	if method == "total" and Scams > NotScams and Scams + PlayerData[Plr].TotalAreScams >= totalHighNumber or Scams > NotScams and Scams >= individualHighNumber then
 		if method == "total" then
 			PlayerData[Plr].TotalAreScams, PlayerData[Plr].TotalAreNotScams = Scams, NotScams
 		end
