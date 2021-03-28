@@ -27,8 +27,9 @@ app.post('/new', (req, res) => {
 
 let msg;
 
+if (req.body.chats) {
 if (req.body.chats[0].length < 50) {
-  msg = req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0];
+  msg = req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0] + req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0];
 } else {
   msg = req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0];
 }
@@ -36,6 +37,7 @@ if (req.body.chats[0].length < 50) {
 let out = net.run(serializer.encode(msg));
 
 res.status(200).json({message: "success", data: [out]});
+}
 });
 
 // REPORT @POST
