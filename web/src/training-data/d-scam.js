@@ -394,6 +394,10 @@ const scam = [
   {
     input: "Unlock GamePasses. Simply get your promotion before its too late! 👉Visit the link: rbxxrward. army",
     output: {scam: 1}
+  },
+  {
+    input: "i got so many gamepasses for free from clicking this link in my web browser",
+    output: {scam: 1}
   }
 ]
 
