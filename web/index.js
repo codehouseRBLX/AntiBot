@@ -1,12 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const brain      = require('brain.js')
-const trainData  = require('./src/training-data')
-const serializer = require('./src/serializer')
-const net        = new brain.NeuralNetwork()
+const brain      = require('brain.js');
+const trainData  = require('./src/training-data');
+const serializer = require('./src/serializer');
+const net        = new brain.NeuralNetwork();
 
 const app = express();
-net.train(serializer.serialize(trainData))
+net.train(serializer.serialize(trainData));
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,18 +25,22 @@ app.get('/ping', (req, res) => {
 // NEW @POST
 app.post('/new', (req, res) => {
 
-let msg = req.body.chats[0] + " ahahaighaiosghoisahgiosahgioshoiashgi"
+let msg;
 
-let out = net.run(serializer.encode(msg))
+if (req.body.chats[0].length < 50) {
+  msg = req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0];
+} else {
+  msg = req.body.chats[0] + " " + req.body.chats[0] + " " + req.body.chats[0];
+}
 
-console.log(out)
+let out = net.run(serializer.encode(msg));
 
-res.status(200).json({message: "success", data: [out]})
+res.status(200).json({message: "success", data: [out]});
 });
 
 // REPORT @POST
 app.post('/report', (req, res) => {
-res.sendStatus(200)
+res.sendStatus(200);
 });
 
 app.listen(8080, () => console.log(`im not dead`));
