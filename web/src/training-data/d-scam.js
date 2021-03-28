@@ -278,6 +278,122 @@ const scam = [
   {
     input: "get free valk",
     output: {scam: 1}
+  },
+  {
+    input: "😍🔥🌈🌟This groups members are qualified to retrieve tons of ROBUX and Game Passes all instantly for free! Visit the following link👉: robuxupgrade.me",
+    output: {scam: 1}
+  },
+  {
+    input: "i love robux.gift ...free robux!",
+    output: {scam: 1}
+  },
+  {
+    input: "free robux at ---> robux.gift",
+    output: {scam: 1}
+  },
+  {
+    input: "poor?robux.gift",
+    output: {scam: 1}
+  },
+  {
+    input: "just got TONS of ROBUX using fastbucks.me! Visit fastbucks.me in yiyr briwser ti generate ROBUX instantly!",
+    output: {scam: 1}
+  },
+  {
+    input: "😍🔥🌈🌟This groups members are qualified to retrieve piles of bucks and barrels of bucs and free Game Passes all instantly! Go to the link👉: resourcely.me",
+    output: {scam: 1}
+  },
+  {
+    input: "hi! earn tons of BUX instantly👉 following the link: robux.codes.club",
+    output: {scam: 1}
+  },
+  {
+    input: "hey you! receive instantly tons of BUX now before it is too late! 👉 following the link: robux.codes.club",
+    output: {scam: 1}
+  },
+  {
+    input: "👍Hey you since you are on my profile you are selected to get access to all Game passes, also barrels of R$ Quickly! 👉",
+    output: {scam: 1}
+  },
+  {
+    input: "💥Redeem your redemption # for robux now for FREE! 💥 Go See Following link now-> rewardbuddy.me",
+    output: {scam: 1}
+  },
+  {
+    input: "Check it out 👉 rewardbuddy.me",
+    output: {scam: 1}
+  },
+  {
+    input: "You found me, which means you are qualified for rewards! Following link👉 rewardbuddy.me",
+    output: {scam: 1}
+  },
+  {
+    input: "You found me, which means you are one of the few qualified for rewards! Link👉 robuxtools.me",
+    output: {scam: 1}
+  },
+  {
+    input: "👉Hey, if you are seeing this notification then you're now 👉qualified👈 See link robuxtools.me now.",
+    output: {scam: 1}
+  },
+  {
+    input: "🏆Receive Game Passes to EVERY game and piles full of 💲BUX Right away. Official event so NO info is required!",
+    output: {scam: 1}
+  },
+  {
+    input: "👉Look at the following link now👉: robuxtools.me",
+    output: {scam: 1}
+  },
+  {
+    input: "💲BUX",
+    output: {scam: 1}
+  },
+  {
+    input: "💲BUCKS",
+    output: {scam: 1}
+  },
+  {
+    input: "💲BUCS",
+    output: {scam: 1}
+  },
+  {
+    input: "👍You caught me! If you see this, you are a chosen winner! Check out following: robuxtools.me",
+    output: {scam: 1}
+  },
+  {
+    input: "Retrieve loads of $ROBUX and also Passes to all game Instantly!",
+    output: {scam: 1}
+  },
+  {
+    input: "⭐️Official event, no info is needed to receive your rewards!⭐️",
+    output: {scam: 1}
+  },
+  {
+    input: "💥Look at the following link now👉: robuxtools.me",
+    output: {scam: 1}
+  },
+  {
+    input: "I got free robux from rewardsly.ml visit the web to claim your free robux!",
+    output: {scam: 1}
+  },
+  {
+    input: "I just got free robux at roblox.reward!Go to the link below to earn your ROBUX!",
+    output: {scam: 1}
+  },
+  {
+    input: "Go to blox.me for free robux",
+    output: {scam: 1}
+  },
+  {
+    input: "Hiii :) I just got 200,000 Robux for FREE!! I wanted to let you known so you can get it too!!! to get robux for free for roblox.com, free4mobile24.com is the site you need to go!",
+    output: {scam: 1}
+  },
+  {
+    input: "🧡You're eligible for BUX⭐! Proceed instantly for tons of BUX. No info needed! Unlock GamePasses.",
+    output: {scam: 1}
+  },
+  {
+    input: "Unlock GamePasses. Simply get your promotion before its too late! 👉Visit the link: rbxxrward. army",
+    output: {scam: 1}
   }
 ]
 
