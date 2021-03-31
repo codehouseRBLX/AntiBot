@@ -25,12 +25,27 @@ local alertUsersIfScam = false -- Tell the rest of the players in the server if 
 local canBanBots = true -- If it bans 
 local removeMessages = true -- Remove the scam messages if a user is found to be a bot. Suggested to be on 
 local filterInsteadOfHide = true -- The message will be displayed as "[Content Deleted]" instead of just disappearing. Only works if removeMessages is on. This is more efficient and the chat will load faster.
+
 local individualHighNumber = 1 -- If there are this number messages or more marked as scam, the user will face the desired punishments (THE LOWER THE NUMBER THE FASTER THE SYSTEM WILL WORK)
 local totalHighNumber = 0.4 -- If the total scam score is greater than or equal to this number, the user will face the desired punishments (THE LOWER THE NUMBER THE FASTER THE SYSTEM WILL WORK)
+
 local method = "total" -- The meathod that controls how the AI tabulates the data
 -- "total" - Adds up the scam and not scam score, and checks to see if it's higher than the number (the one you put under "totalHighNumber")
 -- "individual" - Checks how many of the scam messages were sent
-local APIurl = "https://antibot.codehouse.repl.co" -- Do not change unless you known what you are doing
+
+
+
+
+-- // Do not change the ones below unless you known what you are doing!
+local API_URL = "https://antibot.codehouse.repl.co" -- If you are self hosting the anti bot change the url to yours
+local MAX_FILTER_RETRIES = 3
+local FILTER_BACKOFF_INTERVALS = {50/1000, 100/1000, 200/1000}
+local MAX_FILTER_DURATION = 60
+--- Constants used to decide when to notify that the chat filter is having issues filtering messages.
+local FILTER_NOTIFCATION_THRESHOLD = 3 --Number of notifcation failures before an error message is output.
+local FILTER_NOTIFCATION_INTERVAL = 60 --Time between error messages.
+local FILTER_THRESHOLD_TIME = 60 --If there has not been an issue in this many seconds, the count of issues resets.
+
 
 --[[
   ___  __  ____  ____ 
@@ -43,9 +58,8 @@ local MessageCache, PlayerData, BannedIds = {}, {}, {}
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
-local HashLib = require(script:WaitForChild("HashLib"))
+local HashLib, ChatService = require(script:WaitForChild("HashLib")), require(ServerScriptService:WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
 local Sha1 = HashLib.sha1
-local ChatService = require(ServerScriptService:WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
 if not ChatService:GetChannel("All") then
 	while true do
 		local ChannelName = ChatService.ChannelAdded:Wait()
@@ -85,13 +99,35 @@ local function Punish(Plr, Scams, NotScams)
 	if warnIfScam then
 		warn("AntiBot || "..Plr.Name.." has been flagged by the auto bot detection system. || MORE INFO: Scam Likelihood: "..tostring(Scams).." | Not A Scam Likelihood: "..tostring(NotScams))
 	end
-	if alertUsersIfScam then
-		AntibotNotification:SayMessage(Plr.Name.." has been flagged by the auto bot detection system.", "All")
+	local SystemChannel = ChatService:GetChannel("System")
+	if alertUsersIfScam and SystemChannel then
+		SystemChannel:SendSystemMessage(Plr.Name.." has been flagged by the auto bot detection system.", {ChatColor = Color3.fromRGB(255, 255, 255)})
 	end
 end
 
-local function ValidateMessage(sender, message)
-	local Plr = ChatService:GetSpeaker(sender):GetPlayer()
+local LastFilterNoficationTime, LastFilterIssueTime, FilterIssueCount = 0
+local function OnFilterFail()
+	if (time() - LastFilterIssueTime) > FILTER_THRESHOLD_TIME then
+		FilterIssueCount = 0
+	end
+	FilterIssueCount += 1
+	LastFilterIssueTime = time()
+	local systemChannel = ChatService:GetChannel("System")
+	if systemChannel and FilterIssueCount >= FILTER_NOTIFCATION_THRESHOLD and (time() - LastFilterNoficationTime) > FILTER_NOTIFCATION_INTERVAL then
+		LastFilterNoficationTime = time()
+		systemChannel:SendSystemMessage(
+			ChatLocalization:FormatMessageToSend(
+				"GameChat_ChatService_ChatFilterIssues",
+				"The chat filter is currently experiencing issues and messages may be slow to appear."
+			)
+			errorExtraData
+		)
+	end
+end
+
+local function ValidateMessage(sender, message, channelName)
+	local Speaker = ChatService:GetSpeaker(sender)
+	local Plr = Speaker:GetPlayer()
 	if not Plr or string.sub(message, 1, 3) == "/e " then
 		return false
 	end
@@ -102,15 +138,12 @@ local function ValidateMessage(sender, message)
 		NotScams, Scams = unpack(MessageCache[MessageHash])
 	else
 		local bodyData = {
-			name = Plr.Name,
-			id = Plr.UserId,
-			chats = {message},
-			timeInGame = 5
+			chats = {message}
 		}
 
 		local Body
 		local Success = xpcall(function()
-			Body = HttpService:JSONDecode(HttpService:RequestAsync({Url = APIurl.."/new", Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(bodyData)}).Body)	
+			Body = HttpService:JSONDecode(HttpService:RequestAsync({Url = API_URL.."/new", Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(bodyData)}).Body)	
 		end, function(Err)
 			warn("An error occured while trying to connect to the anti-bot API. Reason: ", Err)
 		end)
@@ -128,7 +161,7 @@ local function ValidateMessage(sender, message)
 			PlayerData[Plr].TotalAreScams, PlayerData[Plr].TotalAreNotScams = Scams, NotScams
 		end
 		if Plr then
-			ChatService:GetSpeaker(sender):SendMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.", "All", AntibotNotification.Name)
+			Speaker:SendSystemMessage("Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.", "All", AntibotNotification.Name)
 			Punish(Plr, Scams, NotScams)
 		end
 
@@ -141,8 +174,8 @@ end
 local function Run(ChatService)
 	local function checkMessageAntiBot(sender, message, channelName)
 		if not removeMessages then
-			coroutine.wrap(pcall)(ValidateMessage, sender, message)
-		elseif ValidateMessage(sender, message) then
+			coroutine.wrap(pcall)(ValidateMessage, sender, message, channelName)
+		elseif ValidateMessage(sender, message, channelName) then
 			return true
 		end
 
@@ -150,8 +183,8 @@ local function Run(ChatService)
 	end
 
 	local function filterMessageASync(sender, messageObject, channelName)
-		if ValidateMessage(sender, messageObject.Message) then
-			messageObject.Message = "[Content Deleted]"
+		if ValidateMessage(sender, messageObject.Message, channelName) then
+			messageObject.Message = "[ Content Deleted ]"
 		end
 	end
 
