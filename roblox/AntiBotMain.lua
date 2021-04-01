@@ -54,10 +54,15 @@ local FILTER_THRESHOLD_TIME = 60 --If there has not been an issue in this many s
  \___)\__/(____/(____)
 ]]--
 -- // Variables
-local MessageCache, PlayerData, BannedIds = {}, {}, {}
+local MessageCache, PlayerData, BannedIds, ChatLocalization = {}, {}, {}, nil
 local HttpService, Players, ServerScriptService, RunService = game:GetService("HttpService"), game:GetService("Players"), game:GetService("ServerScriptService"), game:GetService("RunService")
 local HashLib, ChatService = require(script:WaitForChild("HashLib")), require(ServerScriptService:WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
 local Sha1 = HashLib.sha1
+pcall(function() ChatLocalization = require(game:GetService("Chat"):FindFirstChild("ClientChatModules"):FindFirstChild("ChatLocalization")) end)
+if ChatLocalization == nil then ChatLocalization = {} end
+if not ChatLocalization.FormatMessageToSend or not ChatLocalization.LocalizeFormattedMessage then
+	function ChatLocalization:FormatMessageToSend(_, Str) return Str end
+end
 if not ChatService:GetChannel("All") then
 	while true do
 		local ChannelName = ChatService.ChannelAdded:Wait()
