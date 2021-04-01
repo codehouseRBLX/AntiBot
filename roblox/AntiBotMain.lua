@@ -39,8 +39,8 @@ local method = "total" -- The meathod that controls how the AI tabulates the dat
 -- // Do not change the ones below unless you known what you are doing!
 local API_URL = "https://antibot.codehouse.repl.co" -- If you are self hosting the anti bot change the url to yours
 local MAX_FILTER_RETRIES = 3
-local FILTER_BACKOFF_INTERVALS = {50/1000, 100/1000, 200/1000}
-local MAX_FILTER_DURATION = 60
+local FILTER_BACKOFF_INTERVALS = {.5, 1, 3}
+local MAX_FILTER_DURATION = 25
 --- Constants used to decide when to notify that the chat filter is having issues filtering messages.
 local FILTER_NOTIFCATION_THRESHOLD = 3 --Number of notifcation failures before an error message is output.
 local FILTER_NOTIFCATION_INTERVAL = 60 --Time between error messages.
@@ -55,9 +55,7 @@ local FILTER_THRESHOLD_TIME = 60 --If there has not been an issue in this many s
 ]]--
 -- // Variables
 local MessageCache, PlayerData, BannedIds = {}, {}, {}
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local ServerScriptService = game:GetService("ServerScriptService")
+local HttpService, Players, ServerScriptService, RunService = game:GetService("HttpService"), game:GetService("Players"), game:GetService("ServerScriptService"), game:GetService("RunService")
 local HashLib, ChatService = require(script:WaitForChild("HashLib")), require(ServerScriptService:WaitForChild("ChatServiceRunner"):WaitForChild("ChatService"))
 local Sha1 = HashLib.sha1
 if not ChatService:GetChannel("All") then
@@ -92,7 +90,7 @@ end)
 local function Punish(Plr, Scams, NotScams)
 	if kickIfScam and Plr.MembershipType == Enum.MembershipType.None then
 		if canBanBots and Plr.AccountAge < 12 then
-			table.insert(BannedIds, Plr.UserId)
+			BannedIds[Plr.UserId] = true
 		end
 		Plr:Kick("AntiBot\nYou have been kicked from the server due to scam messages.\nIf you belive this is a mistake, please contact the game creator.")
 	end
@@ -107,9 +105,8 @@ end
 
 local LastFilterNoficationTime, LastFilterIssueTime, FilterIssueCount = 0
 local function OnFilterFail()
-	if (time() - LastFilterIssueTime) > FILTER_THRESHOLD_TIME then
-		FilterIssueCount = 0
-	end
+	if (time() - LastFilterIssueTime) > FILTER_THRESHOLD_TIME then FilterIssueCount = 0 end
+
 	FilterIssueCount += 1
 	LastFilterIssueTime = time()
 	local systemChannel = ChatService:GetChannel("System")
@@ -128,7 +125,7 @@ end
 local function ValidateMessage(sender, message, channelName)
 	local Speaker = ChatService:GetSpeaker(sender)
 	local Plr = Speaker:GetPlayer()
-	if not Plr or string.sub(message, 1, 3) == "/e " then
+	if not Plr or string.sub(message, 1, 3) == "/e " or not RunService:IsServer() or RunService:IsStudio() then
 		return false
 	end
 
@@ -141,15 +138,21 @@ local function ValidateMessage(sender, message, channelName)
 			chats = {message}
 		}
 
-		local Body
-		local Success = xpcall(function()
-			Body = HttpService:JSONDecode(HttpService:RequestAsync({Url = API_URL.."/new", Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(bodyData)}).Body)	
-		end, function(Err)
-			warn("An error occured while trying to connect to the anti-bot API. Reason: ", Err)
-		end)
+		local Success, Body, Start, Tries = false, nil, os.clock(), 0
+		repeat
+			Start, Tries = os.clock(), Tries + 1
+			local Success = xpcall(function()
+				Body = HttpService:JSONDecode(HttpService:RequestAsync({Url = API_URL.."/new", Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(bodyData)}).Body)	
+			end, function(Err)
+				warn("An error occured while trying to connect to the anti-bot API. Reason: ", Err)
+			end)
+		until (Success or Tries > MAX_FILTER_RETRIES) or wait(FILTER_BACKOFF_INTERVALS[math.min(#FILTER_BACKOFF_INTERVALS, Tries)]) and false
 
 		if Success and Body and Body.data and #Body.data >= 1 then
 			NotScams, Scams = Body.data[1].notscam, Body.data[1].scam
+			if Start - os.clock() > MAX_FILTER_DURATION then OnFilterFail() end
+		else
+			OnFilterFail()
 		end
 
 		MessageCache[MessageHash] = {NotScams, Scams}
