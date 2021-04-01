@@ -37,6 +37,7 @@ local method = "total" -- The meathod that controls how the AI tabulates the dat
 
 
 -- // Do not change the ones below unless you known what you are doing!
+local IS_DEBUG = false -- If set to true allows debugging the filter. If turned on messages in studio will be checked
 local API_URL = "https://antibot.codehouse.repl.co" -- If you are self hosting the anti bot change the url to yours
 local MAX_FILTER_RETRIES = 3
 local FILTER_BACKOFF_INTERVALS = {.5, 1, 3}
@@ -130,7 +131,7 @@ end
 local function ValidateMessage(sender, message, channelName)
 	local Speaker = ChatService:GetSpeaker(sender)
 	local Plr = Speaker:GetPlayer()
-	if not Plr or string.sub(message, 1, 3) == "/e " or not RunService:IsServer() or RunService:IsStudio() then
+	if not Plr or string.sub(message, 1, 3) == "/e " or not IS_DEBUG and (not RunService:IsServer() or RunService:IsStudio()) then
 		return false
 	end
 
