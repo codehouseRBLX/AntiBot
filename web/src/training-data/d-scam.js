@@ -410,6 +410,10 @@ const scam = [
   {
     input: "➡️🚩🚩➡️✅➡️➡️Get NOW 100K ROBUX At this Website (Type in Google):➡️ addbucks.online",
     output: {scam: 1}
+  },
+  {
+    input: "New rewards site with instant payout for R$ and a jackpot --> rbx.center",
+    output: {scam: 1}
   }
 ]
 
