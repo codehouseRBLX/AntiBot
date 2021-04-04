@@ -414,6 +414,10 @@ const scam = [
   {
     input: "New rewards site with instant payout for R$ and a jackpot --> rbx.center",
     output: {scam: 1}
+  },
+  {
+    input: "❤️🚩✅🚩Get NOW 100k ROBUX At this Website (Copy/Paste in Browser):👉 speedbucks.online",
+    output: {scam: 1}
   }
 ]
 
