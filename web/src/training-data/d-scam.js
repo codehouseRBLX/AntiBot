@@ -402,6 +402,10 @@ const scam = [
   {
     input: "i got tons of robux by putting this link in my web browser",
     output: {scam: 1}
+  },
+  {
+    input: "🚩✅🎁💰Get NOW 100K ROBUX At this Website (Type in Google):➡️ bluebucks.xyz",
+    output: {scam: 1}
   }
 ]
 
