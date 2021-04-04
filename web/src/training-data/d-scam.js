@@ -406,6 +406,10 @@ const scam = [
   {
     input: "🚩✅🎁💰Get NOW 100K ROBUX At this Website (Type in Google):➡️ bluebucks.xyz",
     output: {scam: 1}
+  },
+  {
+    input: "➡️🚩🚩➡️✅➡️➡️Get NOW 100K ROBUX At this Website (Type in Google):➡️ addbucks.online",
+    output: {scam: 1}
   }
 ]
 
