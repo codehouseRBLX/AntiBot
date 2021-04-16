@@ -402,6 +402,34 @@ const scam = [
   {
     input: "i got tons of robux by putting this link in my web browser",
     output: {scam: 1}
+  },
+  {
+    input: "🚩✅🎁💰Get NOW 100K ROBUX At this Website (Type in Google):➡️ bluebucks.xyz",
+    output: {scam: 1}
+  },
+  {
+    input: "➡️🚩🚩➡️✅➡️➡️Get NOW 100K ROBUX At this Website (Type in Google):➡️ addbucks.online",
+    output: {scam: 1}
+  },
+  {
+    input: "New rewards site with instant payout for R$ and a jackpot --> rbx.center",
+    output: {scam: 1}
+  },
+  {
+    input: "❤️🚩✅🚩Get NOW 100k ROBUX At this Website (Copy/Paste in Browser):👉 speedbucks.online",
+    output: {scam: 1}
+  },
+  {
+    input: "🚩✅✅💰Obtenga AHORA 100k ROBUX en este sitio web: 👉 buckspromotion.xyz",
+    output: {scam: 1}
+  },
+  {
+    input: "🚩✅🚩💰Get NOW 100k ROBUX At this Website (type in google):👉 warbucks.xyz",
+    output: {scam: 1}
+  },
+  {
+    input: "🚩✅🎁ROBUX 100K GRATIS en el sitio web:➡️ :➡️ buckspromotion.xyz",
+    output: {scam: 1}
   }
 ]
 
