@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const brain      = require('brain.js');
 const trainData  = require('./src/training-data');
 const serializer = require('./src/serializer');
@@ -11,6 +12,7 @@ net.train(serializer.serialize(trainData));
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors());
 
 // HOME @GET
 app.get('/', (req, res) => {
