@@ -6,9 +6,6 @@
 		"ServerScriptService": {
 			"AntiBotMain": {
 				"$path": "AntiBotMain.lua",
-				"HashLib": {
-					"$path": "HashLib.lua"
-				},
 				"AutoMove": {
 					"$path": "AutoMove.server.lua"
 				}
