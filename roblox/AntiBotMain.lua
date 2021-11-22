@@ -181,7 +181,7 @@ local function ValidateMessage(sender, message, channelName)
 		if Plr then
 			Speaker:SendSystemMessage(
 				"Your message was detected as scam".. (removeMessages and " and was not sent" or "") .. ". If you belive this is a mistake, please contact the game creator.",
-				(ChatSettings.GeneralChannelName or "All")
+				channelName
 			)
 			Punish(Plr, Scams, NotScams)
 		end
