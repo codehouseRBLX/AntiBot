@@ -204,8 +204,12 @@ local function Run(ChatService)
 	end
 
 	local function filterMessageASync(sender, messageObject, channelName)
+		if messageObject.IsFiltered then
+			return
+		end
 		if ValidateMessage(sender, messageObject.Message, channelName) then
 			messageObject.Message = "[ Content Deleted ]"
+			messageObject.ExtraData.ChatColor = errorTextColor
 		end
 	end
 
