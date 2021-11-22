@@ -152,12 +152,16 @@ local function ValidateMessage(sender, message, channelName)
 			Success = xpcall(function()
 				Body = HttpService:JSONDecode(HttpService:RequestAsync({Url = API_URL.."/new", Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(bodyData)}).Body)	
 			end, function(Err)
-				warn("An error occured while trying to connect to the anti-bot API. Reason: ", Err)
+				warn("AntiBot || An error occured while trying to connect to the anti-bot API. Reason: ", Err)
 			end)
 		until (Success or Tries > MAX_FILTER_RETRIES) or task.wait(FILTER_BACKOFF_INTERVALS[math.min(#FILTER_BACKOFF_INTERVALS, Tries)]) and false
 
 		if Success and Body and Body.data and #Body.data >= 1 then
 			NotScams, Scams = Body.data[1].notscam, Body.data[1].scam
+			if not NotScams or not Scams then
+				warn("AntiBot || INVALID DATA SENT BY SERVER! RESETTING TO DEFAULTS!")
+				NotScams, Scams = 0, 0
+			end
 			if Start - os.clock() > MAX_FILTER_DURATION then
 				OnFilterFail()
 			end
