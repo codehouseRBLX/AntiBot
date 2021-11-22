@@ -149,7 +149,7 @@ local function ValidateMessage(sender, message, channelName)
 		local Success, Body, Start, Tries = false, nil, os.clock(), 0
 		repeat
 			Start, Tries = os.clock(), Tries + 1
-			local Success = xpcall(function()
+			Success = xpcall(function()
 				Body = HttpService:JSONDecode(HttpService:RequestAsync({Url = API_URL.."/new", Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(bodyData)}).Body)	
 			end, function(Err)
 				warn("An error occured while trying to connect to the anti-bot API. Reason: ", Err)
