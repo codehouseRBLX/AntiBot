@@ -10,7 +10,7 @@ Thanks so much for deciding to add to AntiBot! With your help, we can make this 
 
 If you didn't find your idea in your code, then let's get started:
 
-- **BY ADDING YOUR CONTRIBUTION TO THIS PROJECT YOU UNDERSTAND THAT YOUR CODE WILL BE PUBLISHED UNDER THE MIT LICENSE (which can be found [here](https://github.com/codehouserblx/antibot/license)
+- **BY ADDING YOUR CONTRIBUTION TO THIS PROJECT YOU UNDERSTAND THAT YOUR CODE WILL BE PUBLISHED UNDER THE MIT LICENSE (which can be found [here](https://github.com/codehouserblx/antibot/license))
 
 ---
 
