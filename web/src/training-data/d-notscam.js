@@ -111,6 +111,22 @@ const notscam = [
     input: "can you",
     output: {notscam: 1}
   },
+  {
+    input: "thats a scam there is no way to get free robux",
+    output: {notscam: 1}
+  },
+  {
+    input: "pls dont try that it is a scam there is no way to get robux",
+    output: {notscam: 1}
+  },
+  {
+    input: "My friend said that free robux is not possible to get. Don't trust it!",
+    output: {notscam: 1}
+  },
+  {
+    input: "free robux is not possible to get.",
+    output: {notscam: 1}
+  }
 ]
 
 module.exports = notscam
